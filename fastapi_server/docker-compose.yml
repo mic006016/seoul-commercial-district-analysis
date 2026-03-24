@@ -1,0 +1,46 @@
+version: "3.9"
+
+services:
+  fastapi:
+    build: .
+    container_name: fastapi_app
+    ports:
+      - "${APP_PORT}:8000"
+    volumes:
+      - "${GIT_PATH}/app:/app"
+    env_file:
+      - .env
+    depends_on:
+      - mysql
+      - redis
+
+  mysql:
+    image: mysql:8.0.44
+    container_name: startup_mysql
+    restart: always
+    env_file:
+      - .env
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+
+    ports:
+      - "${MYSQL_PORT}:3306"
+
+    volumes:
+      - "${GIT_PATH}/_data/mysql:/var/lib/mysql"
+      - "${SQL_PATH}:/docker-entrypoint-initdb.d"
+
+  redis:
+    image: redis:7.2
+    container_name: startup_redis_server
+    restart: always
+    env_file:
+      - .env
+    ports:
+      - "6379:6379"
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - "${GIT_PATH}/_data/redis:/data"

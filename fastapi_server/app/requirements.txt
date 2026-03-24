@@ -1,0 +1,14 @@
+fastapi
+uvicorn[standard]
+mysql-connector-python
+redis
+python-dotenv
+jinja2
+pymysql
+cryptography
+django-cors-headers
+lightgbm
+numpy
+pandas
+joblib
+scikit-learn

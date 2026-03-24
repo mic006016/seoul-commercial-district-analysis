@@ -1,0 +1,19 @@
+#!/bin/bash
+
+MYSQL="mysql"
+HOST="127.0.0.1"
+PORT="3308"
+USER="root"
+DB="startupdb"
+FOLDER="/mnt/d/_StartupProject/StartupServer/_dbtablesql"
+
+echo "=== Creating database ==="
+${MYSQL} -h ${HOST} -P ${PORT} -u ${USER} -p < "${FOLDER}/create_startupdb.sql"
+
+echo "=== Importing SQL files ==="
+for f in ${FOLDER}/startupdb_*.sql; do
+    echo "Importing $f"
+    ${MYSQL} -h ${HOST} -P ${PORT} -u ${USER} -p ${DB} < "$f"
+done
+
+echo "=== Import Finished ==="
