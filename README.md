@@ -126,8 +126,8 @@
 ### 🔍 Explainable AI (XAI) & Business Insights
 
 **SHAP (SHapley Additive exPlanations)** 분석을 도입하여 단순 예측을 넘어, 상권이 왜 위축되거나 성장하는지에 대한 핵심 요인을 도출했습니다.
-<img height="400" alt="image" src="https://github.com/user-attachments/assets/d3fa2e25-a560-443b-96b9-6eac1339aedd" />
-<img height="400" alt="image" src="https://github.com/user-attachments/assets/67614324-8de9-482b-86fc-965dd2768b9c" />
+<img height="300" alt="image" src="https://github.com/user-attachments/assets/d3fa2e25-a560-443b-96b9-6eac1339aedd" />
+<img height="300" alt="image" src="https://github.com/user-attachments/assets/67614324-8de9-482b-86fc-965dd2768b9c" />
 
 - **성장형 상권의 조건 (기저효과 반등):** 맹목적인 우상향이 아닌, 장기적인 체력(`MA4` 높음)은 튼튼하지만 직전 분기에 일시적인 조정을 받아(`QoQ` 낮음) 반등이 예상되는 상권. 낮 시간대 대중적 소비 패턴을 보임.
 - **위축형 상권의 경고 (거품 붕괴와 고물가 저항):** 장기 기초 체력이 약한데(`MA4` 낮음) 직전 분기에 매출이 반짝 급등했거나(`QoQ` 높음), 타 상권 대비 단가가 빠르게 상승하여(`ATV` 상승) 소비자의 외면을 받는 상권.
