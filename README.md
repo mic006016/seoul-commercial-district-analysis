@@ -126,6 +126,7 @@
 ### 🔍 Explainable AI (XAI) & Business Insights
 
 **SHAP (SHapley Additive exPlanations)** 분석을 도입하여 단순 예측을 넘어, 상권이 왜 위축되거나 성장하는지에 대한 핵심 요인을 도출했습니다.
+
 <img height="300" alt="image" src="https://github.com/user-attachments/assets/d3fa2e25-a560-443b-96b9-6eac1339aedd" />
 <img height="300" alt="image" src="https://github.com/user-attachments/assets/67614324-8de9-482b-86fc-965dd2768b9c" />
 
