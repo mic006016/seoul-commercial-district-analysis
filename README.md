@@ -1,3 +1,78 @@
+## 🏙️ 서울 상권 매출 예측 및 인텔리전스 대시보드 (Seoul Commercial District Analysis Platform)
+
+본 프로젝트는 서울시 내 상권(행정동) 및 업종 데이터를 기반으로 다음 분기의 예상 총매출액 증감률(QoQ)을 예측하고, 이를 시각화하여 사용자의 직관적인 비즈니스 의사결정(창업, 투자 등)을 돕는 **지능형 상권 분석 웹 플랫폼**입니다. 단순 수치 예측을 넘어, 실시간 AI 추론 결과와 상세 리포트를 제공하는 All-in-One 시스템을 구축했습니다.
+
+### 🌟 핵심 아키텍처 (Architecture)
+
+본 프로젝트는 데이터 분석 및 AI 추론의 효율성과 프론트엔드의 풍부한 인터랙션을 위해 **React(Frontend) - FastAPI(Backend & AI)** 형태의 분리된 아키텍처로 설계되었습니다.
+
+- **FastAPI (AI & Backend Server):** DB 조회(`dbt_afn.py`), LightGBM 모델 추론(`model.py`), 상권 진단 텍스트 생성(`report.py`), 그리고 공간 데이터(GeoJSON) 서빙을 비동기로 빠르고 안정적으로 처리합니다.
+- **React (Frontend Client):** Leaflet 기반의 인터랙티브 지도와 Nivo 차트를 활용하여 방대한 상권 데이터를 시각적으로 렌더링합니다.
+
+### 🔥 담당 업무 및 핵심 기여 (My Contributions)
+
+데이터 수집 및 모델 최적화부터 백엔드 API 설계, 프론트엔드 시각화까지 전체 시스템의 End-to-End 파이프라인 구축을 담당했습니다.
+
+#### 1. AI & Data Engineering (매출 증감률 예측 모델)
+
+- **다중 분류 앙상블 모델 구축:** 3대장 트리 기반 모델(LightGBM, CatBoost)을 TimeSeriesSplit 및 Optuna로 튜닝하여 결합. 최종 **Accuracy 67.2%, Macro F1 0.62** 달성.
+- **Data-Centric 최적화 및 OOT 검증:** 정적 데이터는 배제하고 `_MA4`, `_STD4`, `_QoQ` 등 시계열 파생 변수를 집중 설계. 시간축 기준의 엄격한 OOT(Out-Of-Time) 분할로 데이터 누수 원천 차단.
+- **SHAP 비즈니스 인사이트 도출:** 예측 판단 근거를 분석하여 '기저효과에 의한 성장형 상권'과 '고물가 저항에 의한 위축형 상권'의 뚜렷한 특징 규명.
+
+#### 2. Backend Engineering (FastAPI & 공간 데이터 처리)
+
+- **모듈화된 라우터 설계:** `ai.py`(예측), `status.py`(요약), `status_map.py`(공간) 등으로 책임을 분리하여 유지보수성 극대화.
+- **실시간 상권 진단 리포트 생성 (`report.py`):** AI 모델이 도출한 라벨(0:위축, 1:유지, 2:성장)과 피처 증감률(점포 밀도, 경쟁구조 지수 등)을 결합하여, 프론트엔드에 렌더링될 자연어 형태의 맞춤형 인사이트 리포트를 동적으로 생성하는 로직 구현.
+- **GeoJSON 공간 데이터 서빙:** QGIS를 활용해 서울 자치구 폴리곤을 `.geojson` 포맷으로 추출하고, 이를 FastAPI 정적 파일로 서빙하여 프론트엔드 지도 렌더링 리소스 최적화.
+
+#### 3. Frontend Engineering (React + Vite)
+
+- **인터랙티브 Map UI (`SeoulMap.jsx`):** React-Leaflet을 활용해 서울시 구별 GeoJSON 데이터를 렌더링. 마우스 호버 및 클릭 이벤트에 따라 동적으로 상태를 업데이트하는 공간 인터페이스 구현.
+- **데이터 시각화 대시보드 (`StatusChart.jsx`, `IndustryChart.jsx` 등):** `@nivo` 라이브러리를 활용해 점포당 매출액(Bar), 5분기 매출 추이(Line), 남녀 유동인구 비율(Custom Layout), 업종 비율(Pie) 등을 밀도 있게 표현하는 반응형 컴포넌트 개발.
+
+### 📁 디렉토리 구조 (FastAPI 백엔드 중심)
+
+관심사 분리(SoC) 원칙을 적용하여 라우터(API), 모델(AI), 데이터(DB) 계층을 명확히 구분했습니다.
+
+```jsx
+📦 project-root
+ ┣ 📂 app
+ ┃ ┣ 📂 routers              # [Controller] 요청 URL 라우팅 및 응답
+ ┃ ┃ ┣ 📜 ai.py              # AI 예측 및 리포트 응답 라우터
+ ┃ ┃ ┣ 📜 status.py          # 자치구 현황 데이터 라우터
+ ┃ ┃ ┗ 📜 status_map.py      # 지도 공간 데이터(GeoJSON) 제공 라우터
+ ┃ ┣ 📂 model                # [Service/AI] 모델 추론 및 비즈니스 로직
+ ┃ ┃ ┣ 📜 model.py           # LightGBM 모델 로드(.pkl) 및 추론 로직
+ ┃ ┃ ┗ 📜 report.py          # 예측 결과 기반 동적 텍스트 리포트 생성
+ ┃ ┣ 📂 db                   # [DAO] DB 접근 및 쿼리 처리
+ ┃ ┃ ┗ 📜 dbt_afn.py         # 실시간 피처 데이터 조회 (SQL)
+ ┃ ┗ 📂 static
+ ┃   ┗ 📂 file
+ ┃     ┗ 📜 seoul_gu.geojson # QGIS 추출 자치구 폴리곤 데이터
+ ┣ 📜 main.py                # [Entry Point] FastAPI 애플리케이션 실행
+ ┣ 📜 requirements.txt       # 의존성 관리
+ ┗ 📜 .env                   # 환경변수 (DB 인증 등)
+```
+
+### 🔄 핵심 데이터 흐름 (Data Flow)
+
+사용자의 지도 클릭부터 최종 AI 리포트 출력까지의 파이프라인은 다음과 같이 동작합니다.
+
+1. **Request:** 사용자가 프론트엔드(`SeoulMap.jsx`)에서 특정 구/동/업종을 선택하여 `/ai` 엔드포인트로 요청 전송.
+2. **DB Fetch (`dbt_afn.py`):** 라우터(`ai.py`)가 입력값을 받아 DB 모듈에 질의하여 해당 상권의 최신 피처 데이터를 로드.
+3. **ML Inference (`model.py`):** 로드된 피처(`feature_row`)를 전처리된 LightGBM 모델 객체(`lgb_model`)에 주입하여 다음 분기 성장/유지/위축 여부(Label 0~2) 추론.
+4. **Report Generation (`report.py`):** 예측된 라벨과 상권의 주요 지표(매출, 점포 밀도 등) 증감률을 분석하여 맞춤형 텍스트 리포트(HTML 포맷 포함) 생성.
+5. **Response & Render:** 최종 예측 결과와 리포트가 클라이언트로 반환되며, 프론트엔드는 이를 Nivo 차트 및 요약 패널(`GuInfoPanel.jsx`)에 동적으로 렌더링.
+
+### 🛠 Tech Stack
+
+- **Frontend:** React, Vite, React-Leaflet (Map), @nivo (Charts), Material-UI
+- **Backend (API):** Python, FastAPI, Uvicorn
+- **AI & Data Analysis:** LightGBM, CatBoost, Scikit-learn, SHAP, Pandas
+- **GIS / Spatial Data:** QGIS, GeoJSON
+
+---
+
 ## 📊 서울 상권 및 업종별 매출 증감률 예측 서비스 (Seoul Commercial District Analysis)
 
 ### 💡 Project Overview
