@@ -30,8 +30,8 @@
 - **인터랙티브 Map UI (`SeoulMap.jsx`):** React-Leaflet을 활용해 서울시 구별 GeoJSON 데이터를 렌더링. 마우스 호버 및 클릭 이벤트에 따라 동적으로 상태를 업데이트하는 공간 인터페이스 구현.
 - **데이터 시각화 대시보드 (`StatusChart.jsx`, `IndustryChart.jsx` 등):** `@nivo` 라이브러리를 활용해 점포당 매출액(Bar), 5분기 매출 추이(Line), 남녀 유동인구 비율(Custom Layout), 업종 비율(Pie) 등을 밀도 있게 표현하는 반응형 컴포넌트 개발.
 <p align="center">
-  <img src="https://github.com/user-attachments/assets/3d0f6bea-20ba-4aba-a95e-be99b119c53f" width="40%" alt="서비스화면캡처1">
-  <img src="https://github.com/user-attachments/assets/7d099c7b-7c96-4783-b5c0-ae92aa22140a" width="40%" alt="서비스화면캡처2">
+  <img src="https://github.com/user-attachments/assets/3d0f6bea-20ba-4aba-a95e-be99b119c53f" width="45%" alt="서비스화면캡처1">
+  <img src="https://github.com/user-attachments/assets/7d099c7b-7c96-4783-b5c0-ae92aa22140a" width="45%" alt="서비스화면캡처2">
 </p>
 
 ### 📁 디렉토리 구조 (FastAPI 백엔드 중심)
