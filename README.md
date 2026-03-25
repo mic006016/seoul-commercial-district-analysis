@@ -15,7 +15,7 @@
 
 #### 1. AI & Data Engineering (매출 증감률 예측 모델)
 
-- **다중 분류 앙상블 모델 구축:** 대표 트리 기반 모델(LightGBM, CatBoost)을 TimeSeriesSplit 및 Optuna로 튜닝하여 결합. 최종 **Accuracy 67.2%, Macro F1 0.62** 달성.
+- **다중 분류 앙상블 모델 구축:** 대표적인 트리 기반 모델(LightGBM, CatBoost)을 TimeSeriesSplit 및 Optuna로 튜닝하여 결합. 최종 **Accuracy 67.2%, Macro F1 0.62** 달성.
 - **Data-Centric 최적화 및 OOT 검증:** 정적 데이터는 배제하고 `_MA4`, `_STD4`, `_QoQ` 등 시계열 파생 변수를 집중 설계. 시간축 기준의 엄격한 OOT(Out-Of-Time) 분할로 데이터 누수 원천 차단.
 - **SHAP 비즈니스 인사이트 도출:** 예측 판단 근거를 분석하여 '기저효과에 의한 성장형 상권'과 '고물가 저항에 의한 위축형 상권'의 뚜렷한 특징 규명.
 
