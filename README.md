@@ -1,4 +1,4 @@
-## 🏙️ 서울 상권 매출 예측 및 인텔리전스 대시보드 (Seoul Commercial District Analysis Platform)
+## 🏙️ 서울 상권 및 업종별 매출 증감률 예측 서비스 (Seoul Commercial District Analysis)
 
 본 프로젝트는 서울시 내 상권(행정동) 및 업종 데이터를 기반으로 다음 분기의 예상 총매출액 증감률(QoQ)을 예측하고, 이를 시각화하여 사용자의 직관적인 비즈니스 의사결정(창업, 투자 등)을 돕는 **지능형 상권 분석 웹 플랫폼**입니다. 단순 수치 예측을 넘어, 실시간 AI 추론 결과와 상세 리포트를 제공하는 All-in-One 시스템을 구축했습니다.
 
@@ -77,7 +77,7 @@
 
 ---
 
-## 📊 서울 상권 및 업종별 매출 증감률 예측 서비스 (Seoul Commercial District Analysis)
+## 📊  [데이터 분석 리포트] 머신러닝 기반 서울시 상권 변동성 예측 및 신규 출점 추천 모델 구축
 
 ### 💡 Project Overview
 
