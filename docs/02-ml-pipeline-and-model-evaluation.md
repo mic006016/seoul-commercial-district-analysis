@@ -9,9 +9,9 @@
 <p>클래스 불균형 문제를 해결하기 위해 모델 내부에 <code>class_weight='balanced'</code>(또는 <code>auto_class_weights='Balanced'</code>) 옵션을 적용하였으며, Optuna를 활용해 트리 기반 부스팅 모델 2종(LightGBM, CatBoost)의 하이퍼파라미터를 최적화함.</p>
 <ul>
 
-<img width="300" alt="Image" src="https://github.com/user-attachments/assets/fdd6ab15-7d75-4957-892f-797220320507" />
+<img width="350" alt="Image" src="https://github.com/user-attachments/assets/fdd6ab15-7d75-4957-892f-797220320507" />
 
-<img width="300" alt="Image" src="https://github.com/user-attachments/assets/129dd3aa-72d2-4848-b147-66e2899a20be" />
+<img width="350" alt="Image" src="https://github.com/user-attachments/assets/129dd3aa-72d2-4848-b147-66e2899a20be" />
 
 <li><strong>LightGBM 과적합 점검:</strong> Train F1 Score 0.6294, Val F1 Score 0.5896</li>
 <li><strong>CatBoost 과적합 점검:</strong> Train F1 Score 0.5949, Val F1 Score 0.5860</li>
