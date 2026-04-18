@@ -94,4 +94,4 @@
 
 ---
 
-데이터 분석 페이지: <https://github.com/mic006016/seoul-commercial-district-analysis/tree/main/docs>
+**데이터 분석 페이지:** <https://github.com/mic006016/seoul-commercial-district-analysis/tree/main/docs>
