@@ -13,11 +13,11 @@
 
 데이터 수집 및 모델 최적화부터 고성능 DB 파이프라인 설계 및 백엔드 API 설계, 프론트엔드 시각화까지 전체 시스템의 End-to-End 파이프라인 구축을 담당했습니다.
 
-#### 1. AI & Data Engineering (매출 증감률 예측 모델)
+#### 1. AI & Data Engineering (상권 변동성 다중 분류 예측 모델)
 
-- **다중 분류 앙상블 모델 구축:** 대표적인 트리 기반 모델(LightGBM, CatBoost)을 TimeSeriesSplit 및 Optuna로 튜닝하여 결합. 최종 **Accuracy 67.2%, Macro F1 0.62** 달성.
-- **Data-Centric 최적화 및 OOT 검증:** 정적 데이터는 배제하고 `_MA4`, `_STD4`, `_QoQ` 등 시계열 파생 변수를 집중 설계. 시간축 기준의 엄격한 OOT(Out-Of-Time) 분할로 데이터 누수 원천 차단.
-- **SHAP 비즈니스 인사이트 도출:** 예측 판단 근거를 분석하여 '기저효과에 의한 성장형 상권'과 '고물가 저항에 의한 위축형 상권'의 뚜렷한 특징 규명.
+- **가설 검정 및 다중공선성(VIF) 최적화:** ANOVA/Chi-Square 검정으로 무의미한 정적 변수를 배제하고, VIF 진단을 통해 시계열/비율 변수의 다중공선성을 제거하여 모델의 신뢰도와 설명력을 극대화함.
+- **Data-Centric 시계열 모델링(OOT):** 과거 데이터가 미래를 참조하지 못하도록 3-Fold TimeSeriesSplit 및 엄격한 OOT 분할을 적용. 클래스 불균형을 통제한 LightGBM-CatBoost 앙상블을 구축하여 핵심 타겟인 '성장형' 상권에 대해 실무 유효 수준의 **재현율(Recall) 0.63** 및 **Multi-class ROC-AUC 0.80**을 달성함.
+- **XAI(SHAP) 및 군집 분석 기반 인사이트 도출:** SHAP을 통해 매출 변동성의 동인을 투명하게 해석하고, 군집 분석을 통해 상권의 소비 성격에 따른 모델의 한계점과 적용 가이드라인을 제시함.
 
 #### 2. Backend Engineering (FastAPI & 공간 데이터 처리)
 
