@@ -1,0 +1,60 @@
+<html>
+<body>
+<!--StartFragment--><h3>1. 데이터 분할 전략 (OOT 및 교차 검증)</h3>
+<ul>
+<li><strong>OOT (Out-Of-Time) 분할:</strong> 시계열 데이터의 특성을 반영하여 무작위 분할(Random Split)이 아닌 시간순 분할을 적용함. 가장 최근 1개 분기를 최종 평가용(Test), 그 직전 1개 분기를 가중치 탐색 및 검증용(Val), 나머지 모든 과거 데이터를 학습용(Train)으로 엄격하게 분리하여 데이터 누수(Data Leakage)를 원천 차단함.</li>
+<li><strong>TimeSeriesSplit:</strong> 하이퍼파라미터 튜닝 시 과거 데이터가 미래 데이터를 참조하지 못하도록 Train 셋 내에서 3-Fold 시계열 교차 검증을 수행함.</li>
+</ul>
+<h3>2. 모델 최적화 및 단일 모델 과적합 통제</h3>
+<p>클래스 불균형 문제를 해결하기 위해 모델 내부에 <code>class_weight='balanced'</code>(또는 <code>auto_class_weights='Balanced'</code>) 옵션을 적용하였으며, Optuna를 활용해 트리 기반 부스팅 모델 2종(LightGBM, CatBoost)의 하이퍼파라미터를 최적화함.</p>
+<ul>
+
+<img width="300" alt="Image" src="https://github.com/user-attachments/assets/fdd6ab15-7d75-4957-892f-797220320507" />
+
+<img width="300" alt="Image" src="https://github.com/user-attachments/assets/129dd3aa-72d2-4848-b147-66e2899a20be" />
+
+<li><strong>LightGBM 과적합 점검:</strong> Train F1 Score 0.6294, Val F1 Score 0.5896</li>
+<li><strong>CatBoost 과적합 점검:</strong> Train F1 Score 0.5949, Val F1 Score 0.5860</li>
+<li><strong>평가:</strong> 두 모델 모두 Train과 Val 간의 성능 격차가 0.04 이하로 유지되어 트리 모델 특유의 과적합(Overfitting) 현상이 매우 안정적으로 통제되었음을 확인함. 특히 CatBoost는 과적합 방어에 탁월한 결과를 보임.</li>
+</ul>
+<h3>3. 앙상블 최적화 및 모델 최신화 (Retrain)</h3>
+<ul>
+<li><strong>최적 가중치 탐색:</strong> Val 셋의 예측 확률값을 기반으로 Nelder-Mead 최적화 알고리즘을 사용해 LightGBM과 CatBoost의 F1 Score를 극대화하는 Soft Voting 혼합 비율을 도출함.</li>
+<li><strong>Train+Val 재학습:</strong> 최종 미래 시점(Test)을 예측하기 직전, 직전 분기(Val)의 최신 상권 트렌드를 모델이 학습할 수 있도록 Train과 Val 데이터를 병합하여 두 모델을 최종 재학습함.</li>
+</ul>
+<hr>
+<h3>4. 최종 모델 성능 평가 (Test Set)</h3>
+<p><strong>4.1. 과적합 모니터링 (Macro F1)</strong></p>
+<ul>
+<li>Train Score: 0.6116</li>
+<li>Val Score: 0.5893</li>
+<li><strong>Test Score: 0.5855</strong></li>
+<li><strong>분석:</strong> 과거 데이터로 학습한 모델이 전혀 보지 못한 미래 데이터(Test)에서도 Val Score와 거의 동일한 점수(0.5855)를 기록함. 이는 모델의 일반화 성능이 매우 뛰어나며, 실전에 투입해도 성능 하락이 거의 발생하지 않음을 입증함.</li>
+</ul>
+<p><strong>4.2. 종합 분류 성능 (ROC-AUC)</strong></p>
+<ul>
+
+<img width="450" alt="Image" src="https://github.com/user-attachments/assets/b4bad758-36b7-461d-93a9-3c86a5af0daa" />
+
+<li><strong>Multi-class ROC-AUC (OvR): 0.8036</strong></li>
+<li><strong>분석:</strong> 클래스 불균형이 존재하는 다중 분류 문제에서 모델의 임계값 조정 능력을 보여주는 ROC-AUC 지표가 0.8을 초과함. 이는 모델이 단순히 한 클래스로 찍는 것이 아니라, 3개 클래스를 명확하게 구분해 내는 변별력을 확보했음을 뜻함.</li>
+</ul>
+<p><strong>4.3. 혼동 행렬 (Confusion Matrix) 세부 분석</strong></p>
+
+실제 \ 예측 | 예측: 위축(0) | 예측: 유지(1) | 예측: 성장(2)
+-- | -- | -- | --
+실제: 위축(0) | 1,485 (정답) | 596 | 745
+실제: 유지(1) | 1,402 | 6,737 (정답) | 1,849
+실제: 성장(2) | 703 | 749 | 2,452 (정답)
+
+
+<ul>
+<li><strong>유지형(1) 예측:</strong> 가장 많은 데이터가 분포한 유지형 클래스는 9,988건 중 6,737건을 정확히 예측하여 안정적인 베이스라인을 구축함.</li>
+<li><strong>성장형(2) 예측 (비즈니스 핵심):</strong> 예측의 주 목적이 되는 <strong>실제 성장형 상권 3,904건 중 2,452건(약 62.8%)을 정확하게 포착</strong>해냄. 클래스 불균형 상황임에도 가중치 조절을 통해 핵심 타겟의 재현율(Recall)을 유의미한 수준으로 끌어올림.</li>
+<li><strong>오분류 패턴:</strong> 극단적 오답인 '실제 위축 ➔ 예측 성장(745건)' 또는 '실제 성장 ➔ 예측 위축(703건)' 비율이 존재하나, 중간 지대인 '유지형'과의 혼동 빈도에 비하면 통제 가능한 수준임.</li>
+</ul>
+<h3>5. 종합 결론</h3>
+<p>본 모델은 시계열 데이터의 누수 방지, 가설 검정을 통한 다중공선성(VIF) 변수 제거, 모델 앙상블 및 재학습 등 데이터 분석의 정석적인 파이프라인을 완벽히 준수함. 그 결과, 미래 시점 예측(OOT)에서 과적합 없이 ROC-AUC 0.8 이상의 준수한 변별력을 달성하였으며, 특히 비즈니스적으로 가치가 높은 '성장형 상권'을 60% 이상의 확률로 정확히 타겟팅할 수 있는 실무 투입 수준의 AI 분류 모델을 완성함.</p>
+<!-- notionvc: f61aa723-1d72-4825-b78f-987dffdc1582 --><!--EndFragment-->
+</body>
+</html>
