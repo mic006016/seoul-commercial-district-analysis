@@ -48,7 +48,7 @@
 
 - **Algorithm:** 클래스 불균형을 통제(`class_weight='balanced'`)한 **LightGBM**과 **CatBoost** 모델을 Optuna로 최적화한 후, 앙상블(Ensemble) 가중치 기법을 적용하여 예측 안정성을 높였습니다. (LightGBM은 구조적 특성 파악에, CatBoost는 시계열 모멘텀 추종에 강점을 보임)
 - **Final Evaluation Metrics (OOT Test Set 기준):**
-    - **Accuracy (정확도): 0.64 (64.0%)**
+    - **Accuracy (정확도): 0.64 (63.8%)**
     - **Macro F1-Score: 0.5855**
     - **Multi-class ROC-AUC (OvR): 0.8036** (3개 클래스를 명확하게 구분해 내는 강력한 변별력 확보)
     - **Business Metric:** 비즈니스 타겟인 '성장형(2)' 상권에 대해 **재현율(Recall) 0.63**을 기록하며, 실무적으로 유의미한 성장 징후 선별력을 입증했습니다.
