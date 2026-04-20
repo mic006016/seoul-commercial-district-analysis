@@ -47,6 +47,11 @@
 ### ⚙️ Modeling & Performance
 
 - **Algorithm:** 클래스 불균형을 통제(`class_weight='balanced'`)한 **LightGBM**과 **CatBoost** 모델을 Optuna로 최적화한 후, 앙상블(Ensemble) 가중치 기법을 적용하여 예측 안정성을 높였습니다. (LightGBM은 구조적 특성 파악에, CatBoost는 시계열 모멘텀 추종에 강점을 보임)
+
+| Confusion Matrix | Classification Report |
+|:---:|:---:|
+| <img height="400" alt="Image" src="https://github.com/user-attachments/assets/5734b09d-6328-4129-873b-c157417a1032" /> | <img height="300" alt="image" src="https://github.com/user-attachments/assets/fe8e6bfc-4de7-4819-be07-a1d6a9d9f43a" /> |
+  
 - **Final Evaluation Metrics (OOT Test Set 기준):**
     - **Accuracy (정확도): 0.64 (63.8%)**
     - **Macro F1-Score: 0.5855**
@@ -57,8 +62,9 @@
 
 단순 예측을 넘어, **SHAP 분석**과 **K-Means 상권 군집화**를 도입하여 상권 변화의 핵심 요인과 모델의 작동 한계를 투명하게 도출했습니다.
 
-<img width="300" alt="image" src="https://github.com/user-attachments/assets/c1fce259-0a94-4af2-a29e-8db2c4ad6a50" />
-<img width="300" alt="image" src="https://github.com/user-attachments/assets/2b9328fa-157f-47d0-99ba-559a4aa40079" />
+| 위축형(0) | 성장형(2) |
+|:---:|:---:|
+| <img width="300" alt="image" src="https://github.com/user-attachments/assets/2b9328fa-157f-47d0-99ba-559a4aa40079" /> | <img width="300" alt="image" src="https://github.com/user-attachments/assets/c1fce259-0a94-4af2-a29e-8db2c4ad6a50" /> |
 
 - **성장형 상권의 조건 (기저효과와 대중성):** 최근 단기 매출(`QoQ`)이 오히려 정체되었거나 점포당 매출액 베이스가 낮아 '위로 올라갈 룸(Room)'이 많은 상권. 배후 직장인 인구가 탄탄하며, 객단가 상승폭이 낮아 대중적 소비를 유도할 때 강력한 성장 모멘텀이 발생합니다.
 - **위축형 상권의 경고 (단기 과열 붕괴 및 고단가 리스크):** 전분기에 비정상적으로 매출이 급등(Bubble)했거나, 평소 객단가(`ATV_MA2`)가 매우 높은 고급화 상권일수록 소비 심리 위축 시 가장 먼저 하방 타격을 입습니다. 점심 매출 및 2030 비중 등 상권의 앵커 수요가 부족하면 쉽게 쇠퇴합니다.
