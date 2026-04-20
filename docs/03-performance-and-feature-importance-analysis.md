@@ -1,6 +1,9 @@
 ### 1. Confusion Matrix (혼동 행렬) 및 분류 성능 분석
 
-<img width="500" alt="Image" src="https://github.com/user-attachments/assets/5734b09d-6328-4129-873b-c157417a1032" />
+| Confusion Matrix | Classification Report |
+|:---:|:---:|
+| <img height="400" alt="Image" src="https://github.com/user-attachments/assets/5734b09d-6328-4129-873b-c157417a1032" /> | <img height="300" alt="image" src="https://github.com/user-attachments/assets/fe8e6bfc-4de7-4819-be07-a1d6a9d9f43a" /> |
+
 
 **1.1. 클래스별 분류 양상**
 
