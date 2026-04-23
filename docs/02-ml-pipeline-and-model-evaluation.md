@@ -21,6 +21,7 @@
 - **최적 가중치 탐색:** Val 셋의 예측 확률값을 기반으로 Nelder-Mead 최적화 알고리즘을 사용해 LightGBM과 CatBoost의 F1 Score를 극대화하는 Soft Voting 혼합 비율을 도출함.
 - **Train+Val 재학습:** 최종 미래 시점(Test)을 예측하기 직전, 직전 분기(Val)의 최신 상권 트렌드를 모델이 학습할 수 있도록 Train과 Val 데이터를 병합하여 두 모델을 최종 재학습함.
 
+---
 ### 4. 최종 모델 성능 평가 (Test Set)
 
 **4.1. 과적합 모니터링 (Macro F1)**
