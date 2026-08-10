@@ -5,7 +5,7 @@ print("=== [Step 0] 공통 기준키 설정 ===")
 # 점포/매출 베이스 병합 키 (업종 포함)
 base_keys = ['yq_cd', 'dong_cd', 'dong_nm', 'biz_cd', 'biz_nm']
 # 나머지 지역 지표 브로드캐스팅 키 (업종 제외)
-broad_keys = ['yq_cd', 'dong_cd', 'dong_nm']
+broad_keys = ['yq_cd', 'dong_cd']
 
 print("\n=== [Step 1] 점포와 추정매출 Inner Join ===")
 df_store = pd.read_csv('점포_행정동_통합_2019_2024.csv')
@@ -63,13 +63,13 @@ datasets_info = [
     {
         'file': '서울시 상권분석서비스(집객시설-행정동).csv',
         'rename': {'기준_년분기_코드': 'yq_cd', '행정동_코드': 'dong_cd', '행정동_코드_명': 'dong_nm',
-                   '집객시설_수': 'fclty_tot', '관공서_수': 'gov_cnt', '은행_수': 'bank_cnt',
-                   '종합병원_수': 'gen_hosp_cnt', '일반_병원_수': 'hosp_cnt', '약국_수': 'pharm_cnt',
-                   '유치원_수': 'kind_cnt', '초등학교_수': 'elem_cnt', '중학교_수': 'mid_cnt', 
-                   '고등학교_수': 'high_cnt', '대학교_수': 'univ_cnt', '백화점_수': 'dept_cnt',
-                   '슈퍼마켓_수': 'super_cnt', '극장_수': 'thtr_cnt', '숙박_시설_수': 'accom_cnt',
-                   '공항_수': 'arpt_cnt', '철도_역_수': 'rail_cnt', '버스_터미널_수': 'bus_term_cnt',
-                   '지하철_역_수': 'subway_cnt', '버스_정거장_수': 'bus_stop_cnt'}
+                   '집객시설_수': 'fclty_tot', '관공서_수': 'fclty_gov_cnt', '은행_수': 'fclty_bank_cnt',
+                   '종합병원_수': 'fclty_gen_hosp_cnt', '일반_병원_수': 'fclty_hosp_cnt', '약국_수': 'fclty_pharm_cnt',
+                   '유치원_수': 'fclty_kind_cnt', '초등학교_수': 'fclty_elem_cnt', '중학교_수': 'fclty_mid_cnt', 
+                   '고등학교_수': 'fclty_high_cnt', '대학교_수': 'fclty_univ_cnt', '백화점_수': 'fclty_dept_cnt',
+                   '슈퍼마켓_수': 'fclty_super_cnt', '극장_수': 'fclty_thtr_cnt', '숙박_시설_수': 'fclty_accom_cnt',
+                   '공항_수': 'fclty_arpt_cnt', '철도_역_수': 'fclty_rail_cnt', '버스_터미널_수': 'fclty_bus_term_cnt',
+                   '지하철_역_수': 'fclty_subway_cnt', '버스_정거장_수': 'fclty_bus_stop_cnt'}
     },
     {
         'file': '서울시 상권분석서비스(상권변화지표-행정동).csv',
@@ -95,9 +95,9 @@ for info in datasets_info:
         
     # 컬럼명 변경
     df_temp.rename(columns=info['rename'], inplace=True)
-    
+        
     # 딕셔너리에 매핑한 핵심 컬럼들만 남기고 자르기 (데이터가 너무 비대해지는 것 방지)
-    use_cols = list(info['rename'].values())
+    use_cols = [col for col in info['rename'].values() if col != 'dong_nm']
     df_temp = df_temp[use_cols]
     
     # 마스터 데이터에 Left Join (yq_cd, dong_cd, dong_nm 기준)
@@ -114,9 +114,9 @@ if os.path.exists(area_file):
 
     df_area.rename(columns={'행정동_코드': 'dong_cd', '행정동_명': 'dong_nm', 
                             '엑스좌표_값': 'coord_x', '와이좌표_값': 'coord_y', '영역_면적': 'dong_area'}, inplace=True)
-    
-    # ['dong_cd', 'dong_nm'] 기준으로 Left Join
-    df_master = pd.merge(df_master, df_area[['dong_cd', 'dong_nm', 'coord_x', 'coord_y', 'dong_area']], on=['dong_cd', 'dong_nm'], how='left')
+        
+    # ['dong_cd'] 기준으로 Left Join
+    df_master = pd.merge(df_master, df_area[['dong_cd', 'coord_x', 'coord_y', 'dong_area']], on=['dong_cd'], how='left')
 
 print("\n=== [Step 4] 파생 변수(구, year, quarter, ds) 추가 및 정렬 ===")
 
@@ -136,7 +136,7 @@ df_master['dong_cd'] = df_master['dong_cd'].astype(str)
 df_master['gu_cd'] = df_master['dong_cd'].str[:5]
 df_master['gu_nm'] = df_master['gu_cd'].map(gu_mapping)
 
-# 4-3. yq_cd를 문자열로 변환 (예: 20191 -> '20191')
+# 4-3. yq_cd를 문자열로 변환 
 yq_str = df_master['yq_cd'].astype(str)
 
 # 4-4. year, quarter 추출 (정수형)
@@ -152,10 +152,25 @@ front_cols = ['ds', 'year', 'quarter', 'yq_cd', 'gu_cd', 'gu_nm', 'dong_cd', 'do
 remaining_cols = [c for c in df_master.columns if c not in front_cols]
 df_master = df_master[front_cols + remaining_cols]
 
-print("\n=== [Step 5] 시계열 정렬 및 최종 마스터 저장 ===")
-# 5-1. 전처리를 위한 1차 정렬 (지역 -> 업종 -> 시간)
+# 4-7. 결측치 처리를 위한 시계열 완벽 정렬 (행정동 -> 업종 -> 시간 순)
+df_master = df_master.sort_values(['dong_cd', 'biz_cd', 'ds']).reset_index(drop=True)
+
+print("\n=== [Step 5] 구조적 결측치(BFill) 보정 ===")
+
+# 5-1. 집객시설 (2020년 4분기 이전 누락 처리)
+facility_cols = [col for col in df_master.columns if col.startswith('fclty_')]
+if facility_cols:
+    df_master[facility_cols] = df_master.groupby('dong_cd')[facility_cols].bfill().fillna(0)
+
+# 5-2. 아파트 (2019년 1~3분기 누락 처리)
+apt_cols = [col for col in df_master.columns if col.startswith('apt_')]
+if apt_cols:
+    df_master[apt_cols] = df_master.groupby('dong_cd')[apt_cols].bfill().fillna(0)
+
+print("\n=== [Step 6] 시계열 정렬 및 최종 마스터 저장 ===")
+# 6-1. 전처리를 위한 1차 정렬 (지역 -> 업종 -> 시간)
 df_master = df_master.sort_values(['dong_cd', 'biz_cd', 'yq_cd']).reset_index(drop=True)
 
-# 5-2. 저장
+# 6-2. 저장
 df_master.to_csv("seoul_cma_data.csv", index=False, encoding='utf-8-sig')
 print(f"최종 마스터 데이터 저장 완료! (Shape: {df_master.shape})")
